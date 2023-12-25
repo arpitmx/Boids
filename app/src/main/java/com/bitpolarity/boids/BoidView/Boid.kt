@@ -20,7 +20,7 @@ class Boid(var posX: Float, var posY: Float, var velocityX: Float, var velocityY
 
     companion object {
         const val MAX_SPEED = 8.0f
-        const val MAX_FORCE = 0.8f
+        const val MAX_FORCE = 2f
         const val TAG = "BoidDebug"
     }
 
