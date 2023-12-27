@@ -1,18 +1,17 @@
 package com.bitpolarity.boids
 
-import android.opengl.Visibility
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
+import android.media.MediaPlayer
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.SeekBar
-import android.widget.Toast
-import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.bitpolarity.boids.BoidView.BoidView
+import com.bitpolarity.boids.ExtensionsUtil.animSlideDown
+import com.bitpolarity.boids.ExtensionsUtil.animSlideUp
 import com.bitpolarity.boids.databinding.ActivityMainBinding
-import java.util.concurrent.BlockingDeque
 
 class MainActivity : AppCompatActivity(), BoidView.Updates {
 
@@ -20,29 +19,57 @@ class MainActivity : AppCompatActivity(), BoidView.Updates {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    var isSettingVisible = true
+    private var mediaPlayer: MediaPlayer? = null
+    var isSettingVisible = false
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        hideSystemUI()
         setContentView(binding.root)
+        setMediaPlayer()
         setViews()
     }
 
-    val MAX_VIEW_RADIUS = 600
-    val MAX_SEPERATION = 100
-    val MAX_COHESION = 300
+    private fun hideSystemUI() {
 
-    @RequiresApi(Build.VERSION_CODES.O)
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+    }
+
+    private fun setMediaPlayer() {
+        mediaPlayer = MediaPlayer.create(this,R.raw.bgm)
+        mediaPlayer?.isLooping = true
+        if (mediaPlayer?.isPlaying == false) {
+            mediaPlayer?.start()
+        }
+
+    }
+
+    val MAX_VIEW_RADIUS = 600
+    val MAX_SEPERATION = 300
+    val MAX_COHESION = 100
+    val MAX_BOID_RADIUS = 20
+
     private fun setViews() {
+
+
+        setSettingVisibility(isSettingVisible)
         val boidView = binding.boidView
-        binding.seekBarViewRadius.progress = ((boidView.VIEWRADIUS / MAX_VIEW_RADIUS) * 100).toInt()
-        binding.seekBarSeperation.progress = ((boidView.SEPERATION / MAX_SEPERATION) * 100).toInt()
-        binding.seekBarViewRadius.progress = ((boidView.VIEWRADIUS / MAX_COHESION) * 100).toInt()
+
+        binding.tvBoidCount.setTextColor(this.getColor(R.color.boidCounter))
+
+        binding.seekBarViewRadius.progress = ((boidView.VIEWRADIUS / MAX_VIEW_RADIUS) * 100F).toInt()
+        binding.seekBarSeperation.progress = ((boidView.SEPERATION / MAX_SEPERATION) * 100F).toInt()
+        binding.seekBarCohesion.progress = ((boidView.COHESION / MAX_COHESION) * 100F).toInt()
+        binding.boidRadiusSeekbar.progress = ((boidView.BOID_RADIUS / MAX_BOID_RADIUS) * 100F).toInt()
 
         binding.tvViewRadius.text = "View Radius : ${boidView.VIEWRADIUS}"
         binding.tvSeperationForce.text = "Separation Force : ${boidView.SEPERATION}"
-        binding.tvCohesionForce.text = "Cohesion Force : ${boidView.VIEWRADIUS}"
+        binding.tvCohesionForce.text = "Cohesion Force : ${boidView.COHESION}"
+        binding.tvboidRadius.text = "Boid Radius : ${boidView.BOID_RADIUS}"
 
         binding.seekBarViewRadius.setOnSeekBarChangeListener(object :
             SeekBar.OnSeekBarChangeListener {
@@ -98,6 +125,24 @@ class MainActivity : AppCompatActivity(), BoidView.Updates {
 
         })
 
+
+        binding.boidRadiusSeekbar.setOnSeekBarChangeListener(object :
+            SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                val metrics = convertProgressToValue(progress.toFloat(), MAX_BOID_RADIUS.toFloat())
+                binding.tvboidRadius.text = "Boid Radius: ${metrics}"
+                boidView.BOID_RADIUS = metrics
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+
+            }
+
+        })
+
         binding.resetButton.setOnClickListener{
             boidView.reset()
         }
@@ -105,12 +150,9 @@ class MainActivity : AppCompatActivity(), BoidView.Updates {
         binding.settingButton.setOnClickListener {
                 if(isSettingVisible){
                     setSettingVisibility(false)
-                    boidView.isWallMode = true
                 }else {
                     setSettingVisibility(true)
-                    boidView.isWallMode = false
                 }
-
         }
 
         binding.vertexVisibleSwitch.setOnCheckedChangeListener{_, isChecked ->
@@ -119,29 +161,57 @@ class MainActivity : AppCompatActivity(), BoidView.Updates {
             }else {
                 boidView.verticesVisible = false
             }
-
         }
 
         binding.switch1.setOnCheckedChangeListener{_,isChecked ->
             if (isChecked){
                 boidView.ishunterMode = true
-                binding.switch1.text = "Hunter Spawn"
+                binding.switch1.text = "Hunter"
             }else {
                 boidView.ishunterMode = false
-                binding.switch1.text = "Bird Spawn"
+                binding.switch1.text = "Bird"
 
             }
         }
 
 
+        binding.wallModeSwitch.setOnCheckedChangeListener{_,isChecked ->
+            if (isChecked){
+                boidView.isWallMode = true
+            }else {
+                boidView.isWallMode = false
+            }
+        }
+
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        hideSystemUI()
+        if (mediaPlayer?.isPlaying == false) {
+            mediaPlayer?.start()
+        }
+
+    }
+    override fun onPause() {
+        super.onPause()
+
+        if (mediaPlayer?.isPlaying == true) {
+            mediaPlayer?.pause()
+        }
+    }
+
 
     fun setSettingVisibility(flag: Boolean) {
         if (flag) {
+
+            binding.settingLayout.animSlideUp(this,200)
             binding.settingLayout.visibility = View.VISIBLE
             isSettingVisible = true
-        } else {
 
+        } else {
+            binding.settingLayout.animSlideDown(this,200)
             binding.settingLayout.visibility = View.GONE
             isSettingVisible = false
 
@@ -150,8 +220,7 @@ class MainActivity : AppCompatActivity(), BoidView.Updates {
     }
 
     fun convertProgressToValue(progress: Float, maxValue: Float): Float {
-        // Calculate actual value based on progress, minValue, and maxValue
-        return (progress * maxValue / 100F)
+        return ((progress * maxValue) / 100F)
     }
 
     val MAXBOIDCOUNT = 1000
@@ -163,8 +232,12 @@ class MainActivity : AppCompatActivity(), BoidView.Updates {
 
                 for(i in 0..50)
                     binding.boidView.boids.removeAt(i)
-
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer?.release()
     }
 }
 

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Boids</string>
+    <string name="hunter">Birds</string>
+    <string name="vertices">Vertices</string>
+    <string name="wall">Wall Mode</string>
+    <string name="boid_radius">Boid Radius</string>
 </resources>

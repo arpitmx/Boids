@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="boidColor">#000000</color>
-    <color name="boidCounter">#000000</color>
-    <color name="navbarColor">#FFFFFF</color>
+    <color name="boidColor">#FFFFFF</color>
+    <color name="boidCounter">#FFFFFF</color>
+    <color name="navbarColor">#000000</color>
+
 
 </resources>

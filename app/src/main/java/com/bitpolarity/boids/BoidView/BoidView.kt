@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
@@ -26,7 +27,7 @@ class BoidView(context: Context, attrs: AttributeSet? = null) : View(context, at
     //var boid: Boid
     private val boidDrawable: Drawable?
     val birdBall = Paint().apply {
-        color = Color.BLACK
+        color = context.getColor(R.color.boidColor)
     }
 
     val hunterBall = Paint().apply {
@@ -39,7 +40,7 @@ class BoidView(context: Context, attrs: AttributeSet? = null) : View(context, at
     }
 
     val paintLine = Paint().apply {
-        color = Color.BLACK
+        color = context.getColor(R.color.boidColor)
         strokeWidth = 0.8f
     }
 
@@ -127,8 +128,10 @@ class BoidView(context: Context, attrs: AttributeSet? = null) : View(context, at
     var VIEWRADIUS = 100.0f
     var SEPERATION = 2.0f
     var COHESION = 10.0f
-    var MIN_BOID_SAFE = 20
+    var MIN_BOID_SAFE = 5
     var WALLSEPERATION = 100F
+    var BOID_RADIUS = 8f
+
 
     var SEPERATION_HUNTERS = 200F
     var ALIGNMENT_HUNTERS = 100f
@@ -229,6 +232,8 @@ class BoidView(context: Context, attrs: AttributeSet? = null) : View(context, at
 
         Log.d("AvgVelocity", "x :${avgVelocityVector.x} y : ${avgVelocityVector.y}")
 
+        //Randomness
+        //avgVelocityVector.divide(randomFloat(-1f,1f))
         return avgVelocityVector
 
     }
@@ -322,7 +327,7 @@ class BoidView(context: Context, attrs: AttributeSet? = null) : View(context, at
     }
 
     private fun drawWall(canvas: Canvas, wall: Boid) {
-        canvas.drawCircle(wall.posX, wall.posY, BOID_RADIUS, wallPaint)
+        canvas.drawCircle(wall.posX, wall.posY, WALL_RADIUS, wallPaint)
     }
 
     val THREASHOLD = 100
@@ -357,9 +362,9 @@ class BoidView(context: Context, attrs: AttributeSet? = null) : View(context, at
 
 
     companion object{
-        private const val INITIAL_SPEED = 20.0f
+        private const val INITIAL_SPEED = 150.0f
         private const val TRIANGLE_SIZE = 30
-        private const val BOID_RADIUS = 8f
+        private const val WALL_RADIUS = 12f
         private const val TAGGlobal = "BoidViewGlobal"
         private const val TAGScreenLimit = "BoidViewScreenLimit"
     }

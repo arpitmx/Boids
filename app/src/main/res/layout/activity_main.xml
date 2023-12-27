@@ -23,7 +23,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3.5"
-        android:elevation="4dp"
+        android:elevation="5dp"
+        android:background="#17171717"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,15 +35,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:fontFamily="sans-serif-condensed"
             android:text="View Radius" />
 
-        <SeekBar
+        <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/seekBarViewRadius"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:max="500"
+            android:max="100"
             android:min="0" />
 
 
@@ -55,11 +56,11 @@
             android:fontFamily="sans-serif-condensed"
             android:text="Seperation Force" />
 
-        <SeekBar
+        <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/seekBarSeperation"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:max="300"
+            android:max="100"
             android:min="0" />
 
         <TextView
@@ -70,57 +71,74 @@
             android:fontFamily="sans-serif-condensed"
             android:text="Cohesion Force" />
 
-        <SeekBar
+        <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/seekBarCohesion"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:max="300"
+            android:max="100"
             android:min="0" />
 
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/tvboidRadius"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="sans-serif-condensed"
+            android:text="@string/boid_radius" />
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/boidRadiusSeekbar"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:max="100"
+            android:min="5" />
+
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:scrollbars="horizontal"
+            android:fadeScrollbars="false"
+            >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginBottom="10dp"
             >
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switch1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:layout_marginStart="20dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="5dp"
-                android:text="Bird Mode " />
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="15dp"
+                android:text="@string/hunter" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/vertexVisibleSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:layout_marginStart="20dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="5dp"
-                android:text="Vertices" />
+                android:layout_marginEnd="15dp"
+                android:layout_toStartOf="@+id/switch1"
+                android:text="@string/vertices" />
 
-
-            <ImageButton
-                android:id="@+id/resetButton"
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/wallModeSwitch"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="5dp"
-                android:padding="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="10dp"
-                android:background="#00000000"
-                android:elevation="20dp"
-                android:src="@drawable/baseline_autorenew_24"
-                android:textColor="@color/white"
-                app:tint="#673AB7" />
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:layout_toStartOf="@+id/vertexVisibleSwitch"
+                android:text="@string/wall" />
+
+
 
         </LinearLayout>
+
+        </HorizontalScrollView>
 
 
 
@@ -128,8 +146,8 @@
 
     <ImageButton
         android:id="@+id/settingButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
         android:layout_margin="10dp"
         android:src="@drawable/round_display_settings_24"
         android:layout_marginTop="16dp"
@@ -143,21 +161,36 @@
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/white" />
 
+    <ImageButton
+        android:id="@+id/resetButton"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="10dp"
+        android:background="#00000000"
+        android:elevation="20dp"
+        android:padding="20dp"
+        android:src="@drawable/baseline_autorenew_24"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settingButton"
+        app:tint="#673AB7" />
+
     <TextView
         android:id="@+id/tvBoidCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
         android:fontFamily="sans-serif-condensed"
         android:text="0"
+        android:elevation="5dp"
         android:textColor="@color/black"
         android:textSize="15dp"
         app:layout_constraintBottom_toBottomOf="@+id/settingButton"
         app:layout_constraintEnd_toStartOf="@+id/settingButton"
-        app:layout_constraintHorizontal_bias="0.958"
+        app:layout_constraintHorizontal_bias="0.96"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="@+id/settingButton"
+        app:layout_constraintVertical_bias="0.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
