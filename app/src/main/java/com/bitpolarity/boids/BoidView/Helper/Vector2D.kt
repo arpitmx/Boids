@@ -64,5 +64,11 @@ class Vector2D(var x: Float, var y: Float) {
             val dy = v2.y - v1.y
             return sqrt(dx * dx + dy * dy)
         }
+
+        fun dist(v1x: Float , v1y : Float , v2x: Float, v2y  : Float ): Float {
+            val dx = v2x - v1x
+            val dy = v2y - v1y
+            return sqrt(dx * dx + dy * dy)
+        }
     }
 }

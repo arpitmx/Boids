@@ -143,10 +143,12 @@ class MainActivity : AppCompatActivity(), BoidView.Updates {
 
         })
 
+        // Reset button
         binding.resetButton.setOnClickListener{
             boidView.reset()
         }
 
+        // Setting button
         binding.settingButton.setOnClickListener {
                 if(isSettingVisible){
                     setSettingVisibility(false)
@@ -155,14 +157,12 @@ class MainActivity : AppCompatActivity(), BoidView.Updates {
                 }
         }
 
+        // Vertex visibility
         binding.vertexVisibleSwitch.setOnCheckedChangeListener{_, isChecked ->
-            if (isChecked){
-                boidView.verticesVisible = true
-            }else {
-                boidView.verticesVisible = false
-            }
+            boidView.verticesVisible = isChecked
         }
 
+        // Spawn mode
         binding.switch1.setOnCheckedChangeListener{_,isChecked ->
             if (isChecked){
                 boidView.ishunterMode = true
@@ -175,12 +175,14 @@ class MainActivity : AppCompatActivity(), BoidView.Updates {
         }
 
 
+        // Wall Mode
         binding.wallModeSwitch.setOnCheckedChangeListener{_,isChecked ->
-            if (isChecked){
-                boidView.isWallMode = true
-            }else {
-                boidView.isWallMode = false
-            }
+            boidView.isWallMode = isChecked
+        }
+
+        // Border mode
+        binding.borderSwitch.setOnCheckedChangeListener{_, isChecked ->
+            boidView.BORDER_MODE = isChecked
         }
 
     }

@@ -41,7 +41,7 @@ class StartScreen : AppCompatActivity() {
 
     private fun setUpViews() {
         binding.boidLogo.animFadein(this,1500)
-        binding.byarmaxlogo.animFadein(this,1000)
+        binding.byarmaxlogo.animFadein(this,1500)
         startTimer()
     }
 

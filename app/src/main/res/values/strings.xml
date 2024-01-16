@@ -4,4 +4,5 @@
     <string name="vertices">Vertices</string>
     <string name="wall">Wall Mode</string>
     <string name="boid_radius">Boid Radius</string>
+    <string name="borders">Borders</string>
 </resources>

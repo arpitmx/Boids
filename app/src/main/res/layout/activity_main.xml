@@ -134,7 +134,13 @@
                 android:layout_toStartOf="@+id/vertexVisibleSwitch"
                 android:text="@string/wall" />
 
-
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/borderSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:layout_toStartOf="@+id/vertexVisibleSwitch"
+                android:text="@string/borders" />
 
         </LinearLayout>
 

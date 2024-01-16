@@ -52,7 +52,6 @@ class BoidView(context: Context, attrs: AttributeSet? = null) : View(context, at
     var isWallMode = false
 
     init {
-
         updates = context as Updates
         boids.clear()
         boidDrawable = ContextCompat.getDrawable(context, R.drawable.boid)
@@ -108,17 +107,16 @@ class BoidView(context: Context, attrs: AttributeSet? = null) : View(context, at
         super.onDraw(canvas)
 
         for (boid in boids) {
-            boid.update(drawNearbyLinesBoids(canvas, boid, boids))
+            boid.update(drawNearbyLinesBoids(canvas, boid))
             drawBoid(canvas, boid)
         }
 
         for (hunter in hunters){
-            hunter.update(drawNearbyLinesHunter(canvas, hunter, boids))
+            hunter.update(drawNearbyLinesHunter(canvas, hunter))
             drawHunter(canvas, hunter)
         }
 
         for (wall in walls){
-            //wall.update(drawNearbyLinesHunter(canvas, wall, boids))
             drawWall(canvas, wall)
         }
 
@@ -131,6 +129,7 @@ class BoidView(context: Context, attrs: AttributeSet? = null) : View(context, at
     var MIN_BOID_SAFE = 5
     var WALLSEPERATION = 100F
     var BOID_RADIUS = 8f
+    var BORDER_MODE = false
 
 
     var SEPERATION_HUNTERS = 200F
@@ -138,119 +137,66 @@ class BoidView(context: Context, attrs: AttributeSet? = null) : View(context, at
 
 
 
-    private fun drawNearbyLinesBoids(canvas: Canvas, boid: Boid, boids: MutableList<Boid>): Vector2D {
+    private fun drawNearbyLinesBoids(canvas: Canvas, boid: Boid): Vector2D {
+
         val avgVelocityVector = Vector2D(0f, 0f)
         var count = 0
-        var nearbyHunterCount = 0
-        var nearbyHunterList : MutableList<Boid> = mutableListOf()
+
+
+        fun processNearbyBoid(nearbyBoid: Boid) {
+            avgVelocityVector.add(nearbyBoid.velocityX, nearbyBoid.velocityY)
+            if (verticesVisible) {
+                canvas.drawLine(boid.posX, boid.posY, nearbyBoid.posX, nearbyBoid.posY, paintLine)
+            }
+            count++
+        }
+
         for (nearbyBoid in boids) {
+            val distance = Vector2D.dist(boid.posX, boid.posY, nearbyBoid.posX, nearbyBoid.posY)
 
-            val vecThis = Vector2D(boid.posX, boid.posY)
-            val vecNearby = Vector2D(nearbyBoid.posX, nearbyBoid.posY)
-            val distance = Vector2D.dist(vecThis, vecNearby)
-
-            //Alignment
-            if (vecNearby != vecThis && distance > 0 && distance < VIEWRADIUS) {
-                avgVelocityVector.add(nearbyBoid.velocityX, nearbyBoid.velocityY)
-                if (verticesVisible) {
-                    canvas.drawLine(
-                        boid.posX,
-                        boid.posY,
-                        nearbyBoid.posX,
-                        nearbyBoid.posY,
-                        paintLine
-                    )
-                }
-                count++
-            }
-
-            //Seperation
-            if (vecNearby != vecThis && distance > 0 && distance < SEPERATION){
-                avgVelocityVector.add(vecThis.x.minus(vecNearby.x), vecThis.y.minus(vecNearby.y))
-            }
-
-            //Cohesion
-            if (vecNearby != vecThis && distance > 0 && distance < COHESION){
-                avgVelocityVector.add(vecNearby.x,vecNearby.y)
+            when {
+                distance > 0 && distance < VIEWRADIUS -> processNearbyBoid(nearbyBoid)
+                distance > 0 && distance < SEPERATION -> avgVelocityVector.add(boid.posX - nearbyBoid.posX, boid.posY - nearbyBoid.posY)
+                distance > 0 && distance < COHESION -> avgVelocityVector.add(nearbyBoid.posX, nearbyBoid.posY)
             }
         }
 
+        if (count>0) {
+            avgVelocityVector.divide(count.toFloat())
+        }
 
         for (nearbyHunter in hunters) {
 
-            val vecThis = Vector2D(boid.posX, boid.posY)
-            val vecNearby = Vector2D(nearbyHunter.posX, nearbyHunter.posY)
-            val distance = Vector2D.dist(vecThis, vecNearby)
+            val distance = Vector2D.dist(boid.posX, boid.posY, nearbyHunter.posX, nearbyHunter.posY)
 
-
-            //Seperation
-            if (vecNearby != vecThis && distance > 0 && distance <= SEPERATION_HUNTERS){
-                avgVelocityVector.add(vecThis.x.minus(vecNearby.x), vecThis.y.minus(vecNearby.y))
-            }
-
-
-            if (vecNearby != vecThis && distance > 0 && distance <= ALIGNMENT_HUNTERS){
-
-                if (verticesVisible) {
-                    canvas.drawLine(
-                        boid.posX,
-                        boid.posY,
-                        nearbyHunter.posX,
-                        nearbyHunter.posY,
-                        paintLine
-                    )
+            when {
+                distance > 0 && distance <= SEPERATION_HUNTERS -> avgVelocityVector.add(boid.posX - nearbyHunter.posX, boid.posY - nearbyHunter.posY)
+                distance > 0 && distance <= ALIGNMENT_HUNTERS -> {
+                    if (verticesVisible) {
+                        canvas.drawLine(boid.posX, boid.posY, nearbyHunter.posX, nearbyHunter.posY, paintLine)
+                    }
+                    if (count > MIN_BOID_SAFE) {
+                        hunters.remove(nearbyHunter)
+                    }
                 }
-
-                nearbyHunterList.add(nearbyHunter)
             }
-
         }
 
 
         for (wall in walls ){
-            val vecThis = Vector2D(boid.posX, boid.posY)
-            val vecNearby = Vector2D(wall.posX, wall.posY)
-            val distance = Vector2D.dist(vecThis, vecNearby)
-
-
+            val distance = Vector2D.dist(boid.posX, boid.posY, wall.posX, wall.posY)
             //Seperation
-            if (vecNearby != vecThis && distance > 0 && distance < WALLSEPERATION){
-                avgVelocityVector.add(vecThis.x.minus(vecNearby.x), vecThis.y.minus(vecNearby.y))
+            if (distance > 0 && distance < WALLSEPERATION) {
+                avgVelocityVector.add(boid.posX - wall.posX, boid.posY - wall.posY)
             }
         }
 
-        if (count > 0) {
-            avgVelocityVector.divide(count.toFloat())
-        }
-
-        if (count > MIN_BOID_SAFE ){
-            Handler(Looper.getMainLooper()).postDelayed({
-                hunters.removeAll(nearbyHunterList)
-            },1000)
-
-        }
-
-        Log.d("AvgVelocity", "x :${avgVelocityVector.x} y : ${avgVelocityVector.y}")
-
-        //Randomness
-        //avgVelocityVector.divide(randomFloat(-1f,1f))
+        //Log.d("AvgVelocity", "x :${avgVelocityVector.x} y : ${avgVelocityVector.y}")
         return avgVelocityVector
 
     }
 
-    private fun spawnNewBoid(){
-        val newBoid = Boid(
-            randomFloat(100f,500f),
-            randomFloat(100f,500f),
-            (Random.nextFloat() - 0.5f) * INITIAL_SPEED,
-            (Random.nextFloat() - 0.5f) * INITIAL_SPEED
-        )
-
-        boids.add(newBoid)
-        updates.getBoidCount(boids.size)
-    }
-
-    private fun drawNearbyLinesHunter(canvas: Canvas, hunter: Boid, boids: MutableList<Boid>): Vector2D {
+    private fun drawNearbyLinesHunter(canvas: Canvas, hunter: Boid): Vector2D {
         val avgVelocityVector = Vector2D(0f, 0f)
         var count = 0
         for (nearbyBoid in boids) {
@@ -281,9 +227,9 @@ class BoidView(context: Context, attrs: AttributeSet? = null) : View(context, at
             }
 
             //Seperation
-            if (vecNearby != vecThis && distance > 0 && distance <= SEPERATION){
-                avgVelocityVector.add(vecThis.x.minus(vecNearby.x), vecThis.y.minus(vecNearby.y))
-            }
+//            if (vecNearby != vecThis && distance > 0 && distance <= SEPERATION){
+//                avgVelocityVector.add(vecThis.x.minus(vecNearby.x), vecThis.y.minus(vecNearby.y))
+//            }
 
 
         }
@@ -304,7 +250,7 @@ class BoidView(context: Context, attrs: AttributeSet? = null) : View(context, at
             avgVelocityVector.divide(count.toFloat())
         }
 
-        Log.d("AvgVelocity", "x :${avgVelocityVector.x} y : ${avgVelocityVector.y}")
+        //Log.d("AvgVelocity", "x :${avgVelocityVector.x} y : ${avgVelocityVector.y}")
 
         return avgVelocityVector
 
@@ -336,17 +282,23 @@ class BoidView(context: Context, attrs: AttributeSet? = null) : View(context, at
 
         Log.d(TAGScreenLimit, "px : ${boid.posX} py : ${boid.posY} H : $canvasHeight W : $canvasWidth"
         )
-//
-//        if (boid.posX < THREASHOLD) boid.velocityX = -boid.velocityX
-//        if (boid.posX > canvasWidth - THREASHOLD) boid.velocityX = -boid.velocityX
-//        if (boid.posY < THREASHOLD) boid.velocityY = -boid.velocityY
-//        if (boid.posY > canvasHeight - THREASHOLD) boid.velocityY = -boid.velocityY
+
+        if (BORDER_MODE){
+            if (boid.posX < THREASHOLD) boid.velocityX = -boid.velocityX
+            if (boid.posX > canvasWidth - THREASHOLD) boid.velocityX = -boid.velocityX
+            if (boid.posY < THREASHOLD) boid.velocityY = -boid.velocityY
+            if (boid.posY > canvasHeight - THREASHOLD) boid.velocityY = -boid.velocityY
+
+        }else{
+            if (boid.posX < 0) boid.posX = canvasWidth
+            if (boid.posX > canvasWidth) boid.posX = 0f
+            if (boid.posY < 0) boid.posY = canvasHeight
+            if (boid.posY > canvasHeight) boid.posY = 0F
+        }
 
 
-        if (boid.posX < 0) boid.posX = canvasWidth
-        if (boid.posX > canvasWidth) boid.posX = 0f
-        if (boid.posY < 0) boid.posY = canvasHeight
-        if (boid.posY > canvasHeight) boid.posY = 0F
+
+
 
     }
 
