@@ -1,6 +1,6 @@
 
 
-<img src="https://github.com/arpitmx/Boids/assets/59350776/67b89133-597c-4bd9-b167-2f61fe0b7c9b" alt="image" width="550" height="350">
+<img src="https://github.com/arpitmx/Boids/assets/59350776/67b89133-597c-4bd9-b167-2f61fe0b7c9b" alt="image" width="700" height="450">
 
 
 
