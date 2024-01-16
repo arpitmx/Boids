@@ -3,8 +3,8 @@
 <img src="https://github.com/arpitmx/Boids/assets/59350776/67b89133-597c-4bd9-b167-2f61fe0b7c9b" alt="image" width="550" height="350">
 
 
-# Boids 2D : Flock Simulation 
 
+# Boids 2D : Flock Simulation 
 ### Understanding Collective Motion
 
 Boids, a term derived from "bird-oid," is an artificial life algorithm developed by Craig Reynolds in 1986 to simulate the intricate flocking behavior observed in groups of animals, particularly birds. The algorithm's elegance lies in its simplicity, employing three basic rules that govern the motion of individual entities (boids) within a group, leading to complex and visually appealing collective patterns.
@@ -18,6 +18,12 @@ In the context of Boids 2D, this algorithm comes to life in a visually stimulati
     <img src="https://github.com/arpitmx/Boids/assets/59350776/c2e77cd4-fefe-4bed-ab6c-775c89fdb414" alt="Screenshot 3" width="200"/>
     <img src="https://github.com/arpitmx/Boids/assets/59350776/64299075-ab80-4919-bf20-aac0348846bf" alt="Screenshot 3" width="200"/>
 </div>
+
+<br>
+
+### In App Clip : 
+https://github.com/arpitmx/Boids/assets/59350776/7d9be33e-e7d0-4c51-b326-fd98362afbd7
+
 
 <br>
 
@@ -73,4 +79,9 @@ The brilliance of the Boids algorithm lies in the emergence of complex behaviors
    - **Stability Updates**: Benefit from continuous improvements ensuring a stable and seamless simulation.
    - **UI Polish📍**: Enjoy a refined user interface that enhances the overall user experience.
 
-Explore the fascinating world of collective motion, understand the elegance of the Boids algorithm, and contribute to the ongoing exploration of artificial life in the Boids 2D GitHub repository: [Visit GitHub Repository](https://github.com/your-username/your-repo-link). Unravel the magic of emergent behavior and witness the beauty of collective motion in a simulated 2D space. 🐦🐜🤖
+## Download 
+
+The app is hosted on Google play store
+
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.bitpolarity.boids&pcampaignid=web_share)
+
