@@ -2,10 +2,14 @@
 
 <img src="https://github.com/arpitmx/Boids/assets/59350776/67b89133-597c-4bd9-b167-2f61fe0b7c9b" alt="image" width="700" height=auto>
 
-
+<br>
+<a href="https://play.google.com/store/apps/details?id=com.bitpolarity.boids&pcampaignid=web_share">
+  <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" width="200" height=auto alt="Alt Text">
+</a>
 
 # Boids 2D : Flock Simulation 
 ### Understanding Collective Motion
+
 
 Boids, a term derived from "bird-oid," is an artificial life algorithm developed by Craig Reynolds in 1986 to simulate the intricate flocking behavior observed in groups of animals, particularly birds. The algorithm's elegance lies in its simplicity, employing three basic rules that govern the motion of individual entities (boids) within a group, leading to complex and visually appealing collective patterns.
 
